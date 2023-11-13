@@ -1,4 +1,4 @@
-package estudianteservice.entities;
+package estudianteservice.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "alumno")
+@Table(name = "estudiante")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AlumnoEntity {
+public class EstudianteEntity {
 
 	@Id
 	@Column(name = "rut", unique = true, nullable = false)

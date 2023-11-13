@@ -1,34 +1,42 @@
-package estudianteservice.services;
+package estudianteservice.service;
 
-import estudianteservice.entities.AlumnoEntity;
-import estudianteservice.repositories.AlumnoRepository;
+import estudianteservice.entity.EstudianteEntity;
+import estudianteservice.model.CuotaEntity;
+import estudianteservice.repository.EstudianteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
-public class AlumnoService {
+public class EstudianteService {
 
 	@Autowired
-	private AlumnoRepository alumnoRepository;
+	private EstudianteRepository estudianteRepository;
+
+	@Autowired
+	private RestTemplate restTemplate;
 
 	//----------------------------------------------------------------------------------------------------------
 	//Busqueda
-	public ArrayList<AlumnoEntity> obtenerAlumnos() {
-		return (ArrayList<AlumnoEntity>) alumnoRepository.findAll();
+	public ArrayList<EstudianteEntity> obtenerAlumnos() {
+		return (ArrayList<EstudianteEntity>) estudianteRepository.findAll();
 	}
 
-	public AlumnoEntity obtenerAlumnoPorRut(String rut){
-		return alumnoRepository.findByRut(rut);
+	public EstudianteEntity obtenerAlumnoPorRut(String rut){
+		return estudianteRepository.findByRut(rut);
 	}
 
 	//----------------------------------------------------------------------------------------------------------
 	//Crear
-	public AlumnoEntity crearAlumno(AlumnoEntity alumno){
-		return alumnoRepository.save(alumno);
+	public EstudianteEntity crearAlumno(EstudianteEntity alumno){
+		return estudianteRepository.save(alumno);
 	}
 
 	//----------------------------------------------------------------------------------------------------------
@@ -44,8 +52,8 @@ public class AlumnoService {
 
 	//----------------------------------------------------------------------------------------------------------
 	//Modificar
-	public AlumnoEntity actualizarAlumno(String rut, AlumnoEntity alumnoActualizado){
-		AlumnoEntity alumno = alumnoRepository.findByRut(rut);
+	public EstudianteEntity actualizarAlumno(String rut, EstudianteEntity alumnoActualizado){
+		EstudianteEntity alumno = estudianteRepository.findByRut(rut);
 		alumno.setRut(alumnoActualizado.getRut());
 		alumno.setApellidos(alumnoActualizado.getApellidos());
 		alumno.setNombres(alumnoActualizado.getNombres());
@@ -53,7 +61,7 @@ public class AlumnoService {
 		alumno.setTipoColegio(alumnoActualizado.getTipoColegio());
 		alumno.setNombreColegio(alumnoActualizado.getNombreColegio());
 		alumno.setFechaEgreso(alumnoActualizado.getFechaEgreso());
-		return alumnoRepository.save(alumno);
+		return estudianteRepository.save(alumno);
 	}
 
 	//----------------------------------------------------------------------------------------------------------
@@ -102,4 +110,34 @@ public class AlumnoService {
 		};
 	}
 
+	public String crearCuotasEstudiantes(String rutEstudiante, int cantidadCuotas) {
+		EstudianteEntity estudiante = estudianteRepository.findByRut(rutEstudiante);
+		int precioBase = 1500000;
+
+		if (estudiante != null) {
+
+			if (cantidadCuotas == 1) {
+				precioBase = precioBase / 2;
+			} else {
+				int descuento = obtenerDescuentoPorTipoColegio(estudiante.getTipoColegio()) +
+								obtenerDescuentoPorTiempoSalidaColegio(estudiante.getFechaEgreso());
+				precioBase = precioBase - (precioBase * descuento / 100);
+			}
+
+			// Construye la URL de manera segura con UriComponentsBuilder
+			UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://cuota-service/crearCuotas")
+					.queryParam("cantidadCuotas", cantidadCuotas)
+					.queryParam("rutEstudiante", rutEstudiante)
+					.queryParam("precioBase", precioBase);
+			String url = builder.toUriString();
+
+			restTemplate.postForEntity(url, null, String.class);
+		}
+		return "Cuotas creadas";
+	}
+
+	public List<CuotaEntity> obtenerCuotas(String rutEstudiante) {
+		List<CuotaEntity> cuotas = restTemplate.getForObject("http://cuota-service/porRut/" + rutEstudiante, List.class);
+		return cuotas;
+	}
 }
