@@ -1,12 +1,11 @@
 server:
   port: 8080
-  
 eureka:
   client:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-      default-zone: http://localhost:8761/eureka
+      default-zone: http://${EUREKA:localhost}:8761/eureka
   instance:
     hostname: localhost
 
@@ -17,15 +16,15 @@ spring:
         locator:
           enabled: true
       routes:
-        - id: student-service
-          uri: lb://student-service
+        - id: estudiante-service
+          uri: lb://estudiante-service
           predicates:
-            - Path=/student/**
+            - Path=/estudiante/**
         - id: book-service
-          uri: lb://book-service
+          uri: lb://cuota-service
           predicates:
-            - Path=/book/**
-        - id: pet-service
-          uri: lb://pet-service
+            - Path=/cuota/**
+        - id: planilla-service
+          uri: lb://planilla-service
           predicates:
-            - Path=/pet/**
+            - Path=/planilla/**
