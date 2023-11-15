@@ -8,7 +8,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CuotaEntity {
+public class CuotaModel {
 	private Long idCuota;
 	private String rutAlumno;
 	private LocalDate fechaVencimiento;

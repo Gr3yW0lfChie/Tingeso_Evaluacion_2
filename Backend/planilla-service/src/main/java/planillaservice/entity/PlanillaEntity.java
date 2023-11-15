@@ -1,6 +1,6 @@
 package planillaservice.entity;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,17 +15,42 @@ import java.time.LocalDate;
 public class PlanillaEntity {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id_prueba", unique = true, nullable = false)
-	private Long idPruebas;
-
-	//Hace la relacion con la entidad alumno
 	@Column(name = "rut_alumno")
-	private String alumno;
+	private String rutAlumno;
 
-	@Column(name = "fecha_examen")
-	private LocalDate fechaExamen;
+	@Column(name = "nombre_alumno")
+	private String nombreAlumno;
 
-	@Column(name = "puntaje")
-	private Integer puntaje;
+	@Column(name = "apellido_alumno")
+	private String apellidoAlumno;
+
+	@Column(name = "examenes_rendidos")
+	private Integer examenesRendidos;
+
+	@Column(name = "promedio_examenes")
+	private Integer promedioExamenes;
+
+	@Column(name = "total_arancel")
+	private Integer totalArancel;
+
+	@Column(name = "tipo_pago")
+	private String tipoPago;
+
+	@Column(name = "cuotas_pactadas")
+	private Integer cuotasPactadas;
+
+	@Column(name = "cuotas_pagadas")
+	private Integer cuotasPagadas;
+
+	@Column(name = "monto_pagado")
+	private Integer montoPagado;
+
+	@Column(name = "fecha_ultimo_pago")
+	private LocalDate fechaUltimoPago;
+
+	@Column(name = "saldo_por_pagar")
+	private Integer saldoPorPagar;
+
+	@Column(name = "cuotas_impagas")
+	private Integer cuotasImpagas;
 }

@@ -1,7 +1,8 @@
 package estudianteservice.service;
 
 import estudianteservice.entity.EstudianteEntity;
-import estudianteservice.model.CuotaEntity;
+import estudianteservice.model.CuotaModel;
+import estudianteservice.model.PlanillaModel;
 import estudianteservice.repository.EstudianteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -136,8 +137,16 @@ public class EstudianteService {
 		return "Cuotas creadas";
 	}
 
-	public List<CuotaEntity> obtenerCuotas(String rutEstudiante) {
-		List<CuotaEntity> cuotas = restTemplate.getForObject("http://cuota-service/porRut/" + rutEstudiante, List.class);
+	public List<CuotaModel> obtenerCuotas(String rutEstudiante) {
+		List<CuotaModel> cuotas = restTemplate.getForObject("http://cuota-service/porRut/" + rutEstudiante, List.class);
 		return cuotas;
+	}
+
+	public void crearPlanilla(String rutAlumno, String apellidoAlumno, String nombreAlumno, PlanillaModel planilla) {
+		planilla.setRutAlumno(rutAlumno);
+		planilla.setApellidoAlumno(apellidoAlumno);
+		planilla.setNombreAlumno(nombreAlumno);
+		HttpEntity<PlanillaModel> request = new HttpEntity<PlanillaModel>(planilla);
+		restTemplate.postForObject("http://planilla-service/planilla", request, PlanillaModel.class);
 	}
 }

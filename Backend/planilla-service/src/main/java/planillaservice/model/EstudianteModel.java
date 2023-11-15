@@ -8,7 +8,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class EstudianteEntity {
+public class EstudianteModel {
 	private String rut;
 	private String apellidos;
 	private String nombres;

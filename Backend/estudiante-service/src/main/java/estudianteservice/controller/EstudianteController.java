@@ -1,7 +1,7 @@
 package estudianteservice.controller;
 
 import estudianteservice.entity.EstudianteEntity;
-import estudianteservice.model.CuotaEntity;
+import estudianteservice.model.CuotaModel;
 import estudianteservice.service.EstudianteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -49,11 +49,11 @@ public class EstudianteController {
 	}
 
 	@GetMapping("/cuotas/{rut}")
-	public ResponseEntity<List<CuotaEntity>> obtenerCuotas(@PathVariable("rut") String rut) {
+	public ResponseEntity<List<CuotaModel>> obtenerCuotas(@PathVariable("rut") String rut) {
 		EstudianteEntity estudiante = estudianteService.obtenerAlumnoPorRut(rut);
 		if(estudiante == null)
 			return ResponseEntity.notFound().build();
-		List<CuotaEntity> cuotas = estudianteService.obtenerCuotas(rut);
+		List<CuotaModel> cuotas = estudianteService.obtenerCuotas(rut);
 		return ResponseEntity.ok(cuotas);
 	}
 }
