@@ -21,9 +21,6 @@ public class PlanillaEntity {
 	@Column(name = "nombre_alumno")
 	private String nombreAlumno;
 
-	@Column(name = "apellido_alumno")
-	private String apellidoAlumno;
-
 	@Column(name = "examenes_rendidos")
 	private Integer examenesRendidos;
 

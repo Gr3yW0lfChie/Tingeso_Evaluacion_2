@@ -1,31 +1,33 @@
-import React, { Component } from "react";
+import React, { Component, useState, useEffect } from "react";
+import { withRouter } from 'react-router-dom';
 import NavbarComponent3 from "./NavbarComponent3";
 import styled from "styled-components";
+import { useNavigate } from 'react-router-dom';
 
-class EstudianteComponent extends Component{
-    constructor(props){
-        super(props);
-        this.state = {
-            estudiantes: [],
-        };
-    }
 
-    componentDidMount(){
-        fetch("http://localhost:8080/estudiante")
+const EstudianteComponent = () => {
+    const [estudiantes, setEstudiantes] = useState([]);
+    const navigate = useNavigate();
+  
+    const redirectToCrearCuotas = (rut, tipoColegio) => {
+        navigate(`/crear-cuotas/${rut}/${tipoColegio}`);
+      };
+  
+    useEffect(() => {
+      fetch("http://localhost:8080/estudiante")
         .then((response) => response.json())
-        .then((data) => this.setState({ estudiantes: data }));
-    }
-
-    render(){
-        return(
-            <div className="home">
-                <NavbarComponent3 />
-                <Styles>
-                <h1 className="text-center"> <b>Listado de estudiantes</b></h1>
-                    <div className="f">
-                    <table border="1" class="content-table">
-                        <thead>
-                            <tr>
+        .then((data) => setEstudiantes(data));
+    }, []);
+  
+    return (
+      <div className="home">
+        <NavbarComponent3 />
+        <Styles>
+          <h1 className="text-center"> <b>Listado de estudiantes</b></h1>
+          <div className="f">
+            <table border="1" className="content-table">
+              <thead>
+              <tr>
                                 <th>Rut</th>
                                 <th>Apellidos</th>
                                 <th>Nombres</th>
@@ -33,30 +35,35 @@ class EstudianteComponent extends Component{
                                 <th>Tipo de colegio</th>
                                 <th>Nombre del colegio</th>
                                 <th>Año egreso del colegio</th>
+                                <th>Crear Cuotas</th>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {this.state.estudiantes.map((estudiante) => (
-                                <tr key={estudiante.rut}>
-                                    <td>{estudiante.rut}</td>
-                                    <td>{estudiante.apellidos}</td>
-                                    <td>{estudiante.nombres}</td>
-                                    <td>{estudiante.fechaNacimiento}</td>
-                                    <td>{estudiante.tipoColegio}</td>
-                                    <td>{estudiante.nombreColegio}</td>
-                                    <td>{estudiante.fechaEgreso}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    </div>
-                </Styles>
-            </div>
-        )
-    }
-}
-
-export default EstudianteComponent;
+              </thead>
+              <tbody>
+                {estudiantes.map((estudiante) => (
+                  <tr key={estudiante.rut}>
+                    <td>{estudiante.rut}</td>
+                    <td>{estudiante.apellidos}</td>
+                                <td>{estudiante.nombres}</td>
+                                <td>{estudiante.fechaNacimiento}</td>
+                                <td>{estudiante.tipoColegio}</td>
+                                <td>{estudiante.nombreColegio}</td>
+                                <td>{estudiante.fechaEgreso}</td>
+                    <td>
+                      <button onClick={() => redirectToCrearCuotas(estudiante.rut, estudiante.tipoColegio)}>
+                        Crear
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Styles>
+      </div>
+    );
+  };
+  
+  export default EstudianteComponent;
 
 const Styles = styled.div`
 

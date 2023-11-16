@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import NavbarComponent from "./NavbarComponent";
+import NavbarComponent3 from "./NavbarComponent3";
 import FileUploadService from "../services/FileUploadService";
 import styled from "styled-components";
 import swal from 'sweetalert';
@@ -45,7 +45,7 @@ class FileUploadComponent extends Component{
   render() {
     return (
       <div className="home">
-        <NavbarComponent />
+        <NavbarComponent3 />
         <Styles>
           <div class="f">
             <div class="container">

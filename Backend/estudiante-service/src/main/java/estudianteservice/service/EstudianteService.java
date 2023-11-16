@@ -37,7 +37,9 @@ public class EstudianteService {
 	//----------------------------------------------------------------------------------------------------------
 	//Crear
 	public EstudianteEntity crearAlumno(EstudianteEntity alumno){
-		return estudianteRepository.save(alumno);
+		EstudianteEntity nuevoAlumno = estudianteRepository.save(alumno);
+		crearPlanilla(alumno.getRut(), alumno.getApellidos(), alumno.getNombres(), new PlanillaModel());
+		return nuevoAlumno;
 	}
 
 	//----------------------------------------------------------------------------------------------------------
@@ -126,7 +128,7 @@ public class EstudianteService {
 			}
 
 			// Construye la URL de manera segura con UriComponentsBuilder
-			UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://cuota-service/crearCuotas")
+			UriComponentsBuilder builder = UriComponentsBuilder.fromUriString("http://cuota-service/cuota/crearCuotas")
 					.queryParam("cantidadCuotas", cantidadCuotas)
 					.queryParam("rutEstudiante", rutEstudiante)
 					.queryParam("precioBase", precioBase);
@@ -144,8 +146,7 @@ public class EstudianteService {
 
 	public void crearPlanilla(String rutAlumno, String apellidoAlumno, String nombreAlumno, PlanillaModel planilla) {
 		planilla.setRutAlumno(rutAlumno);
-		planilla.setApellidoAlumno(apellidoAlumno);
-		planilla.setNombreAlumno(nombreAlumno);
+		planilla.setNombreAlumno(nombreAlumno + " " + apellidoAlumno);
 		HttpEntity<PlanillaModel> request = new HttpEntity<PlanillaModel>(planilla);
 		restTemplate.postForObject("http://planilla-service/planilla", request, PlanillaModel.class);
 	}

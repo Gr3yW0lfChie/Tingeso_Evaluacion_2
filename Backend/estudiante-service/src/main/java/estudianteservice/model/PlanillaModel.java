@@ -13,7 +13,6 @@ public class PlanillaModel {
 
 	private String rutAlumno;
 	private String nombreAlumno;
-	private String apellidoAlumno;
 	private Integer examenesRendidos;
 	private Integer promedioExamenes;
 	private Integer totalArancel;

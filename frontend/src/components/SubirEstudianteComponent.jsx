@@ -6,13 +6,16 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import swal from 'sweetalert';
 
-export default function AutorizacionComponent(props){
+export default function SubirEstudianteComponent(props){
 
     const initialState = {
         rut: "",
         apellidos: "",
         nombres: "",
-
+        fechaNacimiento: new Date(),
+        tipoColegio: "Municipal",
+        nombreColegio: "",
+        fechaEgreso: new Date(),
     };
 
     const [input, setInput] = useState(initialState);
@@ -21,34 +24,60 @@ export default function AutorizacionComponent(props){
         setInput({ ...input, rut: event.target.value });
         console.log(input.rut);
     };
-    const changeFechaHandler = event => {
-        setInput({ ...input, fecha: event.target.value });
-        console.log(input.fecha);
+    const changeApellidosHandler = event => {
+        setInput({ ...input, apellidos: event.target.value });
+        console.log(input.apellidos);
     };
-
+    const changeNombresHandler = event => {
+        setInput({ ...input, nombres: event.target.value });
+        console.log(input.nombres);
+    };
+    const changeFechaNacimientoHandler = event => {
+        setInput({ ...input, fechaNacimiento: new Date(event.target.value) });
+        console.log(input.fechaNacimiento);
+    };
+    const changeTipoColegioHandler = event => {
+        setInput({ ...input, tipoColegio: event.target.value });
+        console.log(input.tipoColegio);
+    };
+    const changeNombreColegioHandler = event => {
+        setInput({ ...input, nombreColegio: event.target.value });
+        console.log(input.nombreColegio);
+    };
+    const changeFechaEgresoHandler = event => {
+        setInput({ ...input, fechaEgreso: new Date(event.target.value) });
+        console.log(input.fechaEgreso);
+    };
     
-    const ingresarAutorizacion = e => {
+    const ingresarEstudiante = async (e) => {
         e.preventDefault();
         swal({
-            title: "¿Está seguro de que desea enviar la autorización?",
-            text: "Una vez enviada, no podrá ser modificada. El empleado quedará AUTORIZADO para trabajar horas extras en la FECHA indicada.",
+            title: "¿Está seguro de que desea ingresar el estudiante?",
             icon: "warning",
-            buttons: ["Cancelar", "Enviar"],
-            dangerMode: true
-        }).then(respuesta=>{
-            if(respuesta){
-                swal("Autorización enviada correctamente!", {icon: "success", timer: "3000"});
-                let autorizacion = { fecha: input.fecha, rut: input.rut};
-                console.log(input.rut)
-                console.log(input.fecha)
-                console.log("autorizacion => " + JSON.stringify(autorizacion));
-                AutorizacionService.IngresarAutorizacion(autorizacion).then(
-                    (res) => {
-                    }
-                  );
-                }
-            else{
-                swal({text: "Autorización no enviada.", icon: "error"});
+            buttons: ["Cancelar", "Ingresar"],
+            dangerMode: true,
+        }).then(async (respuesta) => {
+            if (respuesta) {
+            swal("Estudiante ingresado correctamente!", { icon: "success", timer: "3000" });
+            const estudiante = {
+                rut: input.rut,
+                apellidos: input.apellidos,
+                nombres: input.nombres,
+                fechaNacimiento: input.fechaNacimiento,
+                tipoColegio: input.tipoColegio,
+                nombreColegio: input.nombreColegio,
+                fechaEgreso: input.fechaEgreso,
+            };
+            
+            console.log("estudiante => " + JSON.stringify(estudiante));
+            
+            try {
+                const response = await AutorizacionService.IngresarEstudiante(estudiante);
+            } catch (error) {
+                console.error("Error al ingresar estudiante:", error);
+            }
+            } else {
+            swal({ text: "Estudiante no ingresado.", icon: "error" });
             }
         });
     };
@@ -60,23 +89,53 @@ export default function AutorizacionComponent(props){
                 <NavbarComponent3 />
                     <div className="mainclass">
                         <div className="form1">
-                            <h1 className="text-center"><b>Autorizaciones</b></h1>
+                            <h1 className="text-center"><b>Estudiantes</b></h1>
                             <div className="formcontainer">
                                 <hr></hr>
                                 <div className="container">
                                     <Form>
                                         <Form.Group className="mb-3" controlId="rut" value = {input.rut} onChange={changeRutHandler}>
-                                            <Form.Label>Rut del empleado</Form.Label>
-                                            <Form.Control type="rut" placeholder="Rut del empleado en formato xx.xxx.xxx-x" />
+                                            <Form.Label>Rut del estudiante</Form.Label>
+                                            <Form.Control type="rut" placeholder="Rut del alumno en formato xx.xxx.xxx-x" />
                                         </Form.Group>
 
-                                        <Form.Group className="mb-3" controlId="fecha" value = {input.fecha} onChange={changeFechaHandler}>
-                                            <Form.Label>Fecha de la Autorización</Form.Label>
-                                            <Form.Control type="fecha" placeholder="Fecha en formato AAAA-MM-DD" />
+                                        <Form.Group className="mb-3" controlId="apellidos" value = {input.apellidos} onChange={changeApellidosHandler}>
+                                            <Form.Label>Apellidos</Form.Label>
+                                            <Form.Control type="apellidos" placeholder="Apellidos del estudiante" />
                                         </Form.Group>
+
+                                        <Form.Group className="mb-3" controlId="nombres" value = {input.nombres} onChange={changeNombresHandler}>
+                                            <Form.Label>Nombres</Form.Label>
+                                            <Form.Control type="nombres" placeholder="Nombres del estudiante" />
+                                        </Form.Group>
+
+                                        <Form.Group className="mb-3" controlId="fechaNacimiento">
+                                            <Form.Label>Fecha de nacimiento</Form.Label>
+                                            <Form.Control type="date" placeholder="Fecha de nacimiento del estudiante" onChange={changeFechaNacimientoHandler} />
+                                        </Form.Group>
+
+                                        <Form.Group className="mb-3" controlId="tipoColegio">
+                                            <Form.Label>Tipo de colegio</Form.Label>
+                                            <Form.Control as="select" onChange={changeTipoColegioHandler} value={input.tipoColegio}>
+                                                <option value="Municipal">Municipal</option>
+                                                <option value="Subvencionado">Subvencionado</option>
+                                                <option value="Privado">Privado</option>
+                                            </Form.Control>
+                                        </Form.Group>
+
+                                        <Form.Group className="mb-3" controlId="nombreColegio" value = {input.nombreColegio} onChange={changeNombreColegioHandler}>
+                                            <Form.Label>Nombre del colegio</Form.Label>
+                                            <Form.Control type="nombreColegio" placeholder="Nombre del colegio" />
+                                        </Form.Group>
+
+                                        <Form.Group className="mb-3" controlId="fechaEgreso">
+                                            <Form.Label>Fecha egreso</Form.Label>
+                                            <Form.Control type="date" placeholder="Fecha egreso del estudiante" onChange={changeFechaEgresoHandler} />
+                                        </Form.Group>
+
                                     </Form>
                                 </div>
-                                <Button className="boton" onClick={ingresarAutorizacion}>Registrar Autorización</Button>
+                                <Button className="boton" onClick={ingresarEstudiante}>Registrar Estudiante</Button>
                             </div>
                         </div>
                     </div>

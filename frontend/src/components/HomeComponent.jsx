@@ -38,11 +38,20 @@ export default function Home(){
                         </div>
                     </div>
                     <div class="single-box">
-                        <a href="/planilla-alumnos">
+                        <a href="/planilla-estudiantes">
                             <div class="img-area"></div>
                         </a>
                         <div class="img-text">
                             <span class="header-text"><strong>Planilla de estudiantes</strong></span>
+                            <p></p>
+                        </div>
+                    </div>
+                    <div class="single-box">
+                        <a href="/lista-cuotas">
+                            <div class="img-area"></div>
+                        </a>
+                        <div class="img-text">
+                            <span class="header-text"><strong>Lista cuotas</strong></span>
                             <p></p>
                         </div>
                     </div>

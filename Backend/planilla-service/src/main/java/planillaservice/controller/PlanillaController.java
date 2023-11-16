@@ -8,40 +8,42 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import planillaservice.entity.PlanillaEntity;
 import planillaservice.service.PlanillaService;
-import planillaservice.service.SubirPrueba;
+import planillaservice.service.SubirPruebaService;
+
+import java.io.FileNotFoundException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/planilla")
 public class PlanillaController {
 
 	@Autowired
-	SubirPrueba subirPrueba;
+	SubirPruebaService subirPruebaService;
 
 	@Autowired
 	private PlanillaService planillaService;
 
 	@GetMapping
-	public String mainSubir() {
-		return "subir";
-	}
-	@PostMapping("/examen")
-	public String uploadExamen(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
-		subirPrueba.guardar(file);
-		boolean correcto = subirPrueba.leerCsvExamen(file.getOriginalFilename());
-		if (correcto)
-		{
-			redirectAttributes.addFlashAttribute("mensaje", "¡Archivo cargado correctamente!");
-		}
-		else
-		{
-			redirectAttributes.addFlashAttribute("mensaje", "Verifique el archivo que esta subiendo");
-		}
-		return "redirect:/"; //Cambiar
+	public ResponseEntity<ArrayList<PlanillaEntity>> getAll() {
+		planillaService.actualizarPlanillas();
+		ArrayList<PlanillaEntity> planillas = planillaService.planillas();
+		if(planillas.isEmpty())
+			return ResponseEntity.noContent().build();
+		return ResponseEntity.ok(planillas);
 	}
 
-	@PostMapping()
-	public ResponseEntity<String> save(@RequestBody PlanillaEntity planilla) {
+
+	@PostMapping
+	public void CrearPlanillas(@RequestBody PlanillaEntity planilla){
 		planillaService.save(planilla);
-		return ResponseEntity.ok("Planilla guardada");
 	}
+	@PostMapping("/prueba")
+	public void guardarData(@RequestParam("file") MultipartFile file, RedirectAttributes ms) throws FileNotFoundException, ParseException {
+		subirPruebaService.guardar(file);
+		subirPruebaService.leerCsv("Prueba.csv");
+	}
+
+
 }

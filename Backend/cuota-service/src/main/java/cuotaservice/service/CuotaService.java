@@ -1,7 +1,6 @@
 package cuotaservice.service;
 
 import cuotaservice.entity.CuotaEntity;
-import cuotaservice.model.EstudianteEntity;
 import cuotaservice.repository.CuotaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,20 +46,6 @@ public class CuotaService {
 	//----------------------------------------------------------------------------------------------------------
 	//Modificar
 
-	public void modificarCuota(Long id, String rutAlumno, Boolean cuotaPagada, Integer precioBase, Integer porcentajeInteres, Integer porcentajeDescuento, Integer precioAPagar){
-		Optional<CuotaEntity> cuota = cuotaRepository.findById(id);
-		if (cuota.isPresent()){
-			CuotaEntity cuotaModificada = cuota.get();
-			cuotaModificada.setRutAlumno(rutAlumno);
-			cuotaModificada.setCuotaPagada(cuotaPagada);
-			cuotaModificada.setPrecioBase(precioBase);
-			cuotaModificada.setPorcentajeInteres(porcentajeInteres);
-			cuotaModificada.setPorcentajeDescuento(porcentajeDescuento);
-			cuotaModificada.setPrecioAPagar(precioAPagar);
-			cuotaRepository.save(cuotaModificada);
-		}
-	}
-
 	public void crearCuotas(Integer cantidadCuotas, String rutAlumno, Integer precioBase){
 		LocalDate fechaActual = LocalDate.of(2024, 1, 10);
 		if(cantidadCuotas == 1){
@@ -91,6 +76,15 @@ public class CuotaService {
 		}
 	}
 
+
+	public void pagarCuota(Long id){
+		Optional<CuotaEntity> cuota = cuotaRepository.findById(id);
+		if (cuota.isPresent()){
+			CuotaEntity cuotaPagada = cuota.get();
+			cuotaPagada.setCuotaPagada(true);
+			cuotaRepository.save(cuotaPagada);
+		}
+	}
 	public void modificarCuotasVencidas(LocalDate fechaNueva){
 		ArrayList<CuotaEntity> cuotas = obtenerCuotas();
 		for (CuotaEntity cuota : cuotas){
@@ -112,4 +106,26 @@ public class CuotaService {
 			}
 		}
 	}
+
+
+	public void actualizarDescuentoCuotas(String rut, LocalDate fechaExamen, Integer puntaje){
+		ArrayList<CuotaEntity> cuotas = findByRutAlumno(rut);
+		for (CuotaEntity cuota : cuotas){
+			if (cuota.getFechaVencimiento().isAfter(fechaExamen) && !cuota.getCuotaPagada()){
+					if (puntaje >= 950){
+						cuota.setPorcentajeDescuento(10);
+					} else if (puntaje >= 900){
+						cuota.setPorcentajeDescuento(5);
+					} else if (puntaje >= 850){
+						cuota.setPorcentajeDescuento(2);
+					} else {
+						cuota.setPorcentajeDescuento(0);
+					}
+				cuota.setPrecioAPagar(cuota.getPrecioBase() + (cuota.getPrecioBase() * cuota.getPorcentajeInteres() / 100) - (cuota.getPrecioBase() * cuota.getPorcentajeDescuento() / 100));
+				cuotaRepository.save(cuota);
+			}
+		}
+	}
+
+
 }

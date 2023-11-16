@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import NavbarComponent2 from "./NavbarComponent2";
 import styled from "styled-components";
 
-class FileInformationComponent extends Component{
+class PlanillaComponent2 extends Component{
     constructor(props){
         super(props);
         this.state = {
@@ -49,7 +49,7 @@ class FileInformationComponent extends Component{
     }
 }
 
-export default FileInformationComponent;
+export default PlanillaComponent2;
 
 const Styles = styled.div`
 

@@ -12,12 +12,13 @@ function NavbarComponent2(){
                 <nav>
                 </nav>
                 <a class="btn" href="/"><button>Volver al menú principal</button></a>
-                <a class="btn-2" href="/subir-archivo"><button>Cargar un nuevo Prueba.csv</button></a>
+                <a class="btn-2" href="/crear-cuota"><button>Crear cuotas para un alumno</button></a>
             </header>
             </NavStyle>
         </>
     )
 }
+
 
 export default NavbarComponent2;
 

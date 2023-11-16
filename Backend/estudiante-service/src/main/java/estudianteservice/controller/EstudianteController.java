@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/estudiante")
@@ -41,12 +42,23 @@ public class EstudianteController {
 	}
 
 	@PostMapping("/crearCuotas/{rut}")
-	public ResponseEntity<String> crearCuotas(@PathVariable("rut") String rut, @RequestBody Integer cantidadCuotas){
-		if(estudianteService.obtenerAlumnoPorRut(rut) == null)
+	public ResponseEntity<String> crearCuotas(@PathVariable("rut") String rut, @RequestBody Map<String, Object> requestBody) {
+		if (estudianteService.obtenerAlumnoPorRut(rut) == null) {
 			return ResponseEntity.notFound().build();
-		String creacion = estudianteService.crearCuotasEstudiantes(rut, cantidadCuotas);
-		return ResponseEntity.ok(creacion);
+		}
+		if (requestBody.containsKey("cantidadCuotas")) {
+			try {
+				Integer cantidadCuotas = Integer.valueOf(requestBody.get("cantidadCuotas").toString());
+				String creacion = estudianteService.crearCuotasEstudiantes(rut, cantidadCuotas);
+				return ResponseEntity.ok("Cuotas creadas exitosamente");
+			} catch (NumberFormatException e) {
+				return ResponseEntity.badRequest().body("El campo 'cantidadCuotas' debe ser un número entero");
+			}
+		} else {
+			return ResponseEntity.badRequest().body("El campo 'cantidadCuotas' es obligatorio");
+		}
 	}
+
 
 	@GetMapping("/cuotas/{rut}")
 	public ResponseEntity<List<CuotaModel>> obtenerCuotas(@PathVariable("rut") String rut) {
